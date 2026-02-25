@@ -1,6 +1,7 @@
 package com.vijay.ollama.config;
 
 import com.vijay.ollama.advisors.TokenUsageAuditAdvisor;
+import com.vijay.ollama.tools.HelpDeskTools;
 import com.vijay.ollama.tools.TimeTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -22,13 +23,13 @@ public class HelpDeskChatClientConfig {
 
     @Bean("helpDeskChatClient")
     public ChatClient chatClient(ChatClient.Builder chatClientBuilder,
-                                 ChatMemory chatMemory, TimeTools timeTools) {
+                                 ChatMemory chatMemory, HelpDeskTools helpDeskTools) {
         Advisor loggerAdvisor = new SimpleLoggerAdvisor();
         Advisor tokenUsageAdvisor = new TokenUsageAuditAdvisor();
         Advisor memoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
         return chatClientBuilder
                 .defaultSystem(systemPromptTemplate)
-                .defaultTools(timeTools)
+                .defaultTools(helpDeskTools)
                 .defaultAdvisors(List.of(loggerAdvisor, memoryAdvisor,tokenUsageAdvisor))
                 .build();
     }

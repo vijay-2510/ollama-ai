@@ -1,5 +1,6 @@
 package com.vijay.ollama.controller;
 
+import com.vijay.ollama.model.TicketRequest;
 import com.vijay.ollama.tools.HelpDeskTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,13 +24,13 @@ public class HelpDeskController {
         this.helpDeskTools = helpDeskTools;
     }
 
-    @GetMapping("/help-desk")
+    @PostMapping("/help-desk")
     public ResponseEntity<String> helpDesk(@RequestHeader("username") String username,
-                                           @RequestParam("message") String message) {
+                                           @RequestBody TicketRequest ticketRequest) {
         String answer = chatClient.prompt()
                 .advisors(a -> a.param(CONVERSATION_ID, username))
-                .user(message)
-                .tools(helpDeskTools)
+                .user(ticketRequest.issue())
+                //.tools(helpDeskTools)
                 .toolContext(Map.of("username", username))
                 .call().content();
         return ResponseEntity.ok(answer);
